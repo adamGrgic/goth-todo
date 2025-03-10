@@ -1,0 +1,27 @@
+{{ define "tasks/task_item.html" }}
+<tr class="">
+    <td class="{{if .Status}}line-through text-gray-500{{end}}">{{ .Title }}</td>
+    <td class="{{if .Status}}line-through text-gray-500{{end}}">{{ .Description }}</td>
+    <!-- <td class="{{if .Completed}}line-through text-gray-500{{end}} text-right">{{ .Status }}</td> -->
+    <td class="text-right">
+        <button 
+            hx-post="/toggle/{{ .ID }}" 
+            hx-target="#task-list" 
+            hx-swap="outerHTML" 
+            class="bg-green-500 px-2 py-1 rounded"
+        >
+            ✓
+        </button>
+        <button 
+            hx-post="/delete/{{ .ID }}" 
+            hx-target="#task-list" 
+            hx-swap="outerHTML" 
+            class="bg-red-600 px-2 py-1 rounded ml-2"
+        >
+            ✗
+        </button>
+    </td>
+</tr>
+
+
+{{end}}
