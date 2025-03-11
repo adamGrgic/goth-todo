@@ -3,16 +3,22 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bunx sass --watch --load-path=node_modules src/scss/main.scss public/css/main.css",
+    "build": "bunx sass --load-path=node_modules src/scss/main.scss public/css/main.css --style=compressed && bunx postcss public/css/main.css --use autoprefixer -o public/css/main.css"
+  },
+
   "devDependencies": {
     "@types/bun": "latest",
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.12"
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.85.1"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.0.9"
+    "bootstrap": "^5.3.3"
   }
 }

@@ -3,7 +3,8 @@ package handlers
 import (
 	"goth-todo/server/models"
 	"goth-todo/server/services"
-	"goth-todo/server/templates"
+
+	// "goth-todo/server/templates"
 	"log"
 	"net/http"
 
@@ -18,10 +19,10 @@ func NewTaskHandlers(service services.TaskService) *TaskHandlers {
 	return &TaskHandlers{Service: service}
 }
 
-func (h *TaskHandlers) Foo(c *gin.Context) {
-	c.Writer.Header().Set("Content-Type", "text/html")
-	templates.Home().Render(c, c.Writer) // Use the generated templ function
-}
+// func (h *TaskHandlers) Foo(c *gin.Context) {
+// 	c.Writer.Header().Set("Content-Type", "text/html")
+// 	templates.Dog().Render(c, c.Writer) // Use the generated templ function
+// }
 
 // Loads full page with tasks
 func (h *TaskHandlers) GetTasks(c *gin.Context) {

@@ -18,8 +18,7 @@ tmp_dir = "tmp"
   include_file = []
   kill_delay = "0s"
   log = "build-errors.log"
-  poll = true
-  poll_interval = 0
+  poll = false
   post_cmd = []
   pre_cmd = []
   rerun = false
@@ -51,6 +50,3 @@ tmp_dir = "tmp"
   clear_on_rebuild = false
   keep_scroll = true
 
-# Automatically rebuild Tailwind CSS when CSS files change
-[[build.before]]
-cmd = "bun tailwindcss -i ./static/css/tailwind.css -o ./static/css/output.css"
