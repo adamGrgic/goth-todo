@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goth-todo/server/db"
+	"goth-todo/internal/db"
 
 	"gorm.io/gorm"
 )

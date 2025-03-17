@@ -1,0 +1,25 @@
+package templates
+
+templ Layout(title string, content templ.Component) {
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{title}</title>
+        <link rel="stylesheet" href="/public/css/styles.css">
+    </head>
+    <body>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+        </nav>
+
+        <main>
+            @content
+        </main>
+
+        <footer>
+            <p>BigLeagues - All Rights Reserved</p>
+        </footer>
+    </body>
+    </html>
+}

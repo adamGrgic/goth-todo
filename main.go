@@ -1,8 +1,8 @@
 package main
 
 import (
-	"goth-todo/server/config"
-	"goth-todo/server/db"
+	"goth-todo/internal/config"
+	"goth-todo/internal/db"
 )
 
 var statusCache map[int]string

@@ -1,6 +1,0 @@
-@import "tailwindcss";
-/* test foo test */
-@theme {
-  --font-display: "Satoshi", "serif";
-  --color-primary: oklch(0.84 0.18 117.33);
-}
