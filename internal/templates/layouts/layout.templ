@@ -7,7 +7,7 @@ templ Layout(title string, content templ.Component) {
         <title>{title}</title>
         <link rel="stylesheet" href="/public/css/main.css">
     </head>
-    <body>
+    <body data-bs-theme="dark">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Navbar</a>
@@ -37,7 +37,7 @@ templ Layout(title string, content templ.Component) {
                     <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
-                <form class="d-flex" role="search">
+                <form class="d-flex mb-0" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
@@ -49,8 +49,10 @@ templ Layout(title string, content templ.Component) {
             @content
         </main>
 
-        <footer>
-            <p>BigLeagues - All Rights Reserved</p>
+        <footer >
+            <div class="col-12 d-flex flex-row justify-content-center">
+                <p class="">Goth Stack Todo Application</p>
+            </div>
         </footer>
     </body>
     </html>
