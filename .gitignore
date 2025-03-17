@@ -24,5 +24,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 public/css
 /internal/templates/**/*.txt
+/internal/templates/**/*.go
 
 /tmp/**/* 
