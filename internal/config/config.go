@@ -31,6 +31,7 @@ type App struct {
 
 func CreateApp(db *gorm.DB) *App {
 	r := gin.Default()
+	r.Static("/public", "./public")
 	r.Use(middleware.Logger())
 
 	// Initialize repositories
