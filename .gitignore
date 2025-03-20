@@ -27,3 +27,7 @@ public/css
 /internal/templates/**/*.go
 
 /tmp/**/* 
+
+/bin/**/* 
+
+/public/styles/**/*

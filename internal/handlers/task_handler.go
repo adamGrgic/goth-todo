@@ -41,7 +41,10 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 		log.Println("Something went wrong getting tasks")
 	}
 	// db.DB.Find(&tasks)
+	// tasks_vc.Tasks().Render(c, c.Writer)
+	// templates.Layout("Home", pages.Home()).Render(c, c.Writer)
 	c.HTML(http.StatusOK, "tasks/task_list.html", gin.H{"tasks": tasks})
+
 }
 
 // Renders only the task list (HTMX)

@@ -1,11 +1,17 @@
 package templates
 
+import(
+    "goth-todo/internal/middleware"
+)
+
+// templ header(title string)
+
 templ Layout(title string, content templ.Component) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>{title}</title>
-        <link rel="stylesheet" href="/public/css/main.css">
+        <link rel="stylesheet" href={middleware.GetCSSCSP()}>
     </head>
     <body data-bs-theme="dark">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
