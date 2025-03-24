@@ -16,11 +16,15 @@ func NewContentHandlers() *ContentHandlers {
 	return &ContentHandlers{}
 }
 
-// Loads full page with tasks
-func (h *ContentHandlers) GetHomePage(c *gin.Context) {
-	c.Writer.Header().Set("Content-Type", "text/html")
-
-	templates.Layout("Home", pages.Home()).Render(c, c.Writer)
+// GetHomePage godoc
+// @Summary      Get Home page
+// @Description  Get homepage along with child elements
+// @Produce      html
+// @Success      200 {string} string "HTML content"
+// @Router       / [get]
+func (h *ContentHandlers) GetHomePage(ctx *gin.Context) {
+	ctx.Writer.Header().Set("Content-Type", "text/html")
+	templates.Layout(ctx, "Home", pages.Home()).Render(ctx.Request.Context(), ctx.Writer)
 }
 
 // func (h *ContentHandlers) Layout(c *gin.Context) {

@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"fmt"
+	"goth-todo/internal/db"
 	"goth-todo/internal/models"
 	"goth-todo/internal/services"
+	tasks_vc "goth-todo/internal/templates/components/todos"
 
 	// "goth-todo/server/templates"
 	"log"
@@ -40,40 +43,29 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 	if err != nil {
 		log.Println("Something went wrong getting tasks")
 	}
-	// db.DB.Find(&tasks)
-	// tasks_vc.Tasks().Render(c, c.Writer)
-	// templates.Layout("Home", pages.Home()).Render(c, c.Writer)
-	c.HTML(http.StatusOK, "tasks/task_list.html", gin.H{"tasks": tasks})
+	db.DB.Find(&tasks)
+	tasks_vc.Tasks(c, tasks).Render(c, c.Writer)
 
 }
 
-// Renders only the task list (HTMX)
-// func (h *TaskHandler) RenderTaskList(c *gin.Context) {
-// 	tasks := h.TaskService.GetTasks()
-// 	c.HTML(http.StatusOK, "tasks/task_list.html", gin.H{"tasks": tasks})
-// }
-
-// Renders the form (HTMX)
-// func (h *TaskHandlers) RenderTaskForm(c *gin.Context) {
-// 	c.HTML(http.StatusOK, "tasks/task_form.html", nil)
-// }
-
 // Handles adding a new task
 func (h *TaskHandler) AddTask(c *gin.Context) {
-	// title := c.PostForm("title")
-	// description := c.PostForm("description")
-	// h.Service.AddTask(title, description)
-	// h.RenderTaskList(c)
 	var task models.Task
 	if err := c.ShouldBind(&task); err != nil {
+		fmt.Println("Add task failed")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	h.TaskService.AddTask(&task)
 
-	// tasks := h.TaskService.GetTasks()
-	// c.HTML(http.StatusOK, "tasks/task_list.html", gin.H{"tasks": tasks})
+	tasks, err := h.TaskService.GetTasks()
+	if err != nil {
+		log.Println("Something went wrong getting tasks")
+	}
+
+	db.DB.Find(&tasks)
+	tasks_vc.Tasks(c, tasks).Render(c, c.Writer)
 }
 
 // Toggles task status

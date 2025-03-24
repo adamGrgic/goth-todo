@@ -1,35 +1,45 @@
 run:
 	air
 
+check-env:
+	@command -v docker >/dev/null || (echo "Docker is missing!"; exit 1)
+	@command -v node >/dev/null || (echo "Node is missing!"; exit 1)
+
 clean:
 	@pkill -f "air" || true
 	@pkill -f "main" || true
 
-clean-css:
-	@rm -rf public/styles
-
-
-hash-css: watch-scss hash
-
-watch-scss:
-	@bunx sass --watch --load-path=node_modules src/styles/main.scss public/styles/main.css --style=compressed &
-
-hash:
-	@sleep 2 && go run ./cmd/hash/main.go
-
 css:
-	@bunx sass --load-path=node_modules src/styles/main.scss public/styles/main.css --style=compressed --silence-deprecation=import
-	go run ./cmd/hash/main.go
+	@./bin/css-compiler
 
-watch-css:
-	@bunx sass --watch --load-path=node_modules src/styles/main.scss public/styles/main.css --style=compressed 
+css-watch:
+	@./bin/css-compiler --watch
 
-build-css:
-	@./bin/build-css
+js:
+	@./bin/javascript-compiler
 
+js-watch:
+	@./bin/javascript-compiler --watch
 
-build-ts-scripts:
-	@bun build ./dev/bun/build-css.ts --compile --outfile ./bin/build-css
+templ:
+	@templ generate
+
+templ-watch:
+	@clear
+	@templ generate --watch
+
+docs-go: 
+	@swag init -g ./cmd/app/main.go -o ./docs
+
+bundler:
+	@bun build ./src/scripts/bundlers/css.ts --compile --outfile ./bin/css-compiler
+	@bun build ./src/scripts/bundlers/javascript.ts --compile --outfile ./bin/javascript-compiler
+
+bundler-js-test:
+	@bun ./src/scripts/bundlers/javascript.ts
+
+bundler-css-test:
+	@bun ./src/scripts/bundlers/css.ts
 
 docker-build:
 	docker build -t goth-todo .

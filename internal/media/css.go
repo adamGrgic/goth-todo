@@ -1,4 +1,4 @@
-package middleware
+package media
 
 import (
 	"encoding/json"

@@ -1,65 +1,51 @@
 package templates
 
-import(
-    "goth-todo/internal/middleware"
+import (
+	"goth-todo/internal/middleware"
+	"goth-todo/internal/media"
+	"github.com/gin-gonic/gin"
 )
 
-// templ header(title string)
+templ Layout(c *gin.Context, title string, content templ.Component) {
+	
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>{ title }</title>
+		<script src={ media.GetHTMX()} nonce={ middleware.GetHtmxNonce(c) }></script>
+        <script src={ media.GetHTMXResponseTargets() } nonce={ middleware.GetResponseTargetsNonce(c) }></script>
+		<link rel="stylesheet" href={ media.GetCSSHashFile() } nonce={ middleware.GetCssNonce(c)}>
+	</head>
+	<body data-bs-theme="dark">
+		<nav class="navbar navbar-expand-lg bg-body-tertiary">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">Todo Home</a>
+				<!-- Rest of navbar -->
+			</div>
+		</nav>
 
-templ Layout(title string, content templ.Component) {
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>{title}</title>
-        <link rel="stylesheet" href={middleware.GetCSSCSP()}>
-    </head>
-    <body data-bs-theme="dark">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Navbar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
-                <form class="d-flex mb-0" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-                </div>
-            </div>
-        </nav>
+		<main>
+			if middleware.GetUser(c) != nil {
+				@content
+			} else {
+				<li>
+					<a class="text-gray-200" href="/register">Register</a>
+				</li>
+				<li>
+					<a class="text-gray-200" href="/login">Login</a>
+				</li>
+			}
+			
+		</main>
 
-        <main>
-            @content
-        </main>
+		<footer>
+			<div class="col-12 d-flex flex-row justify-content-center">
+				<p>Goth Stack Todo Application</p>
+			</div>
+		</footer>
+	</body>
+	</html>
 
-        <footer >
-            <div class="col-12 d-flex flex-row justify-content-center">
-                <p class="">Goth Stack Todo Application</p>
-            </div>
-        </footer>
-    </body>
-    </html>
+    <script src={media.GetJsFile("forms")} nonce={middleware.GetJsNonce(c)}></script>
 }

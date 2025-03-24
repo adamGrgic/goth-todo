@@ -7,93 +7,30 @@ import (
 
 var statusCache map[int]string
 
-// func configureApp(db *gorm.DB) *App {
-// 	taskService := services.NewGormTaskService(db)
-// 	taskHandlers := handlers.NewTaskHandlers(taskService)
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
 
-// 	contentService := services.NewGormContentService(db)
-// 	contentHandlers := handlers.NewContentHandlers(contentService)
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
 
-// 	systemService := services.NewGormSystemService(db)
-// 	systemHandlers := handlers.NewSystemHandlers(systemService)
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// 	app := &App{
-// 		Router:         gin.Default(),
-// 		TaskHandler:    taskHandlers,
-// 		ContentHandler: contentHandlers,
-// 		SystemHandler:  systemHandlers,
-// 	}
+// @host      localhost:9090
+// @BasePath  /
 
-// 	app.setupRoutes()
-// 	return app
-// }
+// @securityDefinitions.basic  BasicAuth
 
-// func (a *App) setupRoutes() {
-
-// 	a.Router.LoadHTMLGlob("templ/**/*.html")
-// 	a.Router.Static("/static", "./static")
-
-// 	a.Router.GET("/", middleware.Logger(), a.SystemHandler.Ping)
-// 	a.Router.GET("/content/home", a.ContentHandler.GetHomePage)
-// 	a.Router.GET("/task/get", a.TaskHandler.GetTasks)
-// 	a.Router.POST("/task/add", a.TaskHandler.AddTask)
-// 	a.Router.POST("/toggle/:id", a.TaskHandler.ToggleTask)
-// 	a.Router.POST("/delete/:id", a.TaskHandler.DeleteTask)
-// }
-
-// sample middleware
-// func Logger() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		t := time.Now()
-
-// 		// Set example variable
-// 		c.Set("example", "12345")
-
-// 		// before request
-
-// 		c.Next()
-
-// 		// after request
-// 		latency := time.Since(t)
-// 		log.Print(latency)
-
-// 		// access the status we are sending
-// 		status := c.Writer.Status()
-// 		log.Println(status)
-// 	}
-// }
-
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	db.ConnectDB()
 	db.Migrate()
 
-	app := config.CreateApp(db.DB)
-	// app.Router.Use(Logger())
+	app := config.RunApp(db.DB)
+
 	app.Router.Run(":9090")
 }
-
-// func main() {
-// 	db.ConnectDB()
-// 	db.Migrate()
-
-// 	taskService := services.NewGormTaskService(db.DB)
-// 	taskHandlers := handlers.NewTaskHandlers(taskService)
-
-// 	contentService := services.NewGormContentService(db.DB)
-// 	contentHandlers := handlers.NewContentHandlers(contentService)
-
-// 	r := gin.Default()
-// 	r.LoadHTMLGlob("templ/**/*.html")
-
-// 	r.Static("/static", "./static")
-
-// 	r.GET("/content/home", contentHandlers.GetHomePage)
-// 	r.GET("/task/get", taskHandlers.GetTasks)
-// 	r.POST("/task/add", taskHandlers.AddTask)
-// 	r.POST("/toggle/:id", taskHandlers.ToggleTask)
-// 	r.POST("/delete/:id", taskHandlers.DeleteTask)
-
-// 	r.GET("/", taskHandlers.Foo)
-
-// 	r.Run(":8080")
-// }
