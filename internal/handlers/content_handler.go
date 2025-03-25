@@ -22,9 +22,9 @@ func NewContentHandlers() *ContentHandlers {
 // @Produce      html
 // @Success      200 {string} string "HTML content"
 // @Router       / [get]
-func (h *ContentHandlers) GetHomePage(ctx *gin.Context) {
-	ctx.Writer.Header().Set("Content-Type", "text/html")
-	templates.Layout(ctx, "Home", pages.Home()).Render(ctx.Request.Context(), ctx.Writer)
+func (h *ContentHandlers) GetHomePage(c *gin.Context) {
+	c.Writer.Header().Set("Content-Type", "text/html")
+	templates.Layout(c, "Home", pages.Home()).Render(c.Request.Context(), c.Writer)
 }
 
 // func (h *ContentHandlers) Layout(c *gin.Context) {

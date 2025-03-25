@@ -24,7 +24,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 func (r *UserServiceImpl) GetUser(user *models.User, email string, password string) error {
 	// Look up user
 
-	if err := r.Repo.GetUser(email, password); err != nil {
+	if err := r.Repo.GetUser(user, email, password); err != nil {
 		return err
 	}
 

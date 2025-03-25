@@ -24,12 +24,12 @@ func NewTaskHandler(taskService services.TaskService) *TaskHandler {
 	}
 }
 
-func (h *TaskHandler) RegisterRoutes(router *gin.Engine) {
-	router.GET("/task/get", h.GetTasks)
-	router.POST("/task/add", h.AddTask)
-	router.POST("/toggle/:id", h.ToggleTask)
-	router.POST("/delete/:id", h.DeleteTask)
-}
+// func (h *TaskHandler) RegisterRoutes(router *gin.Engine) {
+// 	router.GET("/task/get", h.GetTasks)
+// 	router.POST("/task/add", h.AddTask)
+// 	router.POST("/toggle/:id", h.ToggleTask)
+// 	router.POST("/delete/:id", h.DeleteTask)
+// }
 
 // func (h *TaskHandlers) Foo(c *gin.Context) {
 // 	c.Writer.Header().Set("Content-Type", "text/html")

@@ -4,7 +4,8 @@ import (
 	"goth-todo/internal/auth"
 	"goth-todo/internal/models"
 	"goth-todo/internal/services"
-	"net/http"
+	templates "goth-todo/internal/templates/layouts"
+	"goth-todo/internal/templates/pages"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,12 +20,16 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 	}
 }
 
-func (h *UserHandler) RegisterRoutes(router *gin.Engine) {
-	// router.GET("/task/get", h.GetTasks)
-	router.GET("/user/login/", h.Login)
-	router.POST("/user/login/", h.Login)
-	// router.POST("/delete/:id", h.DeleteTask)
-}
+// func (h *UserHandler) RegisterRoutes(router *gin.Engine) {
+// 	// router.GET("/task/get", h.GetTasks)
+// 	// router.GET("/user/login/", h.Login)
+// 	router.POST("/user/login/", h.Login)
+// 	// router.POST("/delete/:id", h.DeleteTask)
+// }
+
+// func (h *UserHandler) LoginPage(c *gin.Context) {
+
+// }
 
 func (h *UserHandler) Login(c *gin.Context) {
 	// Parse form values
@@ -35,19 +40,27 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	h.UserService.GetUser(&user, email, password)
 
+	if user.Email == "" {
+
+	}
+
 	// Generate JWT
-	token, err := auth.GenerateJWT(user.Email, "user")
+	token, err := auth.GenerateJWT(user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		// c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
 	}
 
-	// Return token (as JSON or set as cookie)
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"user": gin.H{
-			"id":    user.ID,
-			"email": user.Email,
-		},
-	})
+	c.Set("jwt_token", token)
+
+	templates.Layout(c, "Home", pages.Home()).Render(c.Request.Context(), c.Writer)
 }
+
+// Return token (as JSON or set as cookie)
+// c.JSON(http.StatusOK, gin.H{
+// 	"token": token,
+// 	"user": gin.H{
+// 		"id":    user.ID,
+// 		"email": user.Email,
+// 	},
+// })
