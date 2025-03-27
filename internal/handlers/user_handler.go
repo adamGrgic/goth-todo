@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"goth-todo/internal/auth"
 	"goth-todo/internal/models"
 	"goth-todo/internal/services"
@@ -32,6 +33,8 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 // }
 
 func (h *UserHandler) Login(c *gin.Context) {
+	fmt.Println("Login method running")
+
 	// Parse form values
 	email := c.PostForm("email")
 	password := c.PostForm("password")
@@ -41,7 +44,8 @@ func (h *UserHandler) Login(c *gin.Context) {
 	h.UserService.GetUser(&user, email, password)
 
 	if user.Email == "" {
-
+		templates.LoginError().Render(c.Request.Context(), c.Writer)
+		return
 	}
 
 	// Generate JWT
@@ -54,6 +58,11 @@ func (h *UserHandler) Login(c *gin.Context) {
 	c.Set("jwt_token", token)
 
 	templates.Layout(c, "Home", pages.Home()).Render(c.Request.Context(), c.Writer)
+}
+
+func (h *UserHandler) Register(c *gin.Context) {
+	fmt.Println("Register method running")
+
 }
 
 // Return token (as JSON or set as cookie)

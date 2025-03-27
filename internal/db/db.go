@@ -42,6 +42,7 @@ func MigrateDB() {
 	if err != nil {
 		log.Fatal("Migration failed: ", err)
 	}
+
 	log.Println("Database migration complete")
 }
 

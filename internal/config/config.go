@@ -44,7 +44,7 @@ func RunApp(db *gorm.DB) *App {
 	// User routes
 	userRoutes := r.Group("/user")
 	{
-		userRoutes.POST("/user/login/", userHandlers.Login)
+		userRoutes.POST("/login", userHandlers.Login)
 	}
 
 	// Task routes

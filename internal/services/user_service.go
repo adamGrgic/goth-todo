@@ -36,3 +36,7 @@ func (r *UserServiceImpl) GetUser(user *models.User, email string, password stri
 
 	return nil
 }
+
+func (r *UserServiceImpl) RegisterUser(email string, password string) {
+
+}
