@@ -1,8 +1,8 @@
 package services
 
 import (
-	"goth-todo/internal/models"
-	"goth-todo/internal/repository"
+	"goth-todo/internal/core/models"
+	"goth-todo/internal/core/repository"
 )
 
 type TaskService interface {

@@ -1,14 +1,18 @@
+# MAIN
 run:
 	air
 
+debug:
+	dlv debug ./cmd/app/main.go
+
 check-env:
-	@command -v docker >/dev/null || (echo "Docker is missing!"; exit 1)
-	@command -v node >/dev/null || (echo "Node is missing!"; exit 1)
+	@go run ./cmd/check/main.go
 
 clean:
 	@pkill -f "air" || true
 	@pkill -f "main" || true
 
+# CLIENT
 css:
 	@./bin/css-compiler
 
@@ -28,19 +32,56 @@ templ-watch:
 	@clear
 	@templ generate --watch
 
+# DOCS
 docs-go: 
 	@swag init -g ./cmd/app/main.go -o ./docs
 
+# BUNDLER
 bundler:
 	@bun build ./src/scripts/bundlers/css.ts --compile --outfile ./bin/css-compiler
 	@bun build ./src/scripts/bundlers/javascript.ts --compile --outfile ./bin/javascript-compiler
 
+## run the uncompiled versions of each bundler
 bundler-js-test:
 	@bun ./src/scripts/bundlers/javascript.ts
 
 bundler-css-test:
 	@bun ./src/scripts/bundlers/css.ts
 
+
+# MIGRATIONS
+# Config
+MIGRATE_BIN=migrate
+MIGRATIONS_DIR=./internal/db/migrations
+DB_URL=postgres://postgres:Hockey7232%21@localhost:5432/goth-todo?sslmode=disable
+
+# Usage:
+# make migrate-create name=create_users_table
+migrate-create:
+	$(MIGRATE_BIN) create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
+
+migrate-up:
+	$(MIGRATE_BIN) -database "$(DB_URL)" -path $(MIGRATIONS_DIR) up
+
+migrate-down:
+	$(MIGRATE_BIN) -database "$(DB_URL)" -path $(MIGRATIONS_DIR) down
+
+migrate-force:
+	$(MIGRATE_BIN) -database "$(DB_URL)" -path $(MIGRATIONS_DIR) force $(version)
+
+migrate-version:
+	$(MIGRATE_BIN) -database "$(DB_URL)" -path $(MIGRATIONS_DIR) version
+
+migrate-drop:
+	$(MIGRATE_BIN) -database "$(DB_URL)" -path $(MIGRATIONS_DIR) drop -f
+
+migrate-clean:
+	@go run ./cmd/migrate/main.go --migrate-clean
+
+migrate-seed:
+	@go run ./cmd/seed/main.go
+
+# DOCKER
 docker-build:
 	docker build -t goth-todo .
 
@@ -49,3 +90,5 @@ docker-run:
 
 docker-dev:
 	docker compose up --build
+
+

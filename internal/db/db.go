@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"goth-todo/internal/models"
+	"goth-todo/internal/core/models"
 	"log"
 
 	"gorm.io/driver/postgres"

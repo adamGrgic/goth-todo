@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"goth-todo/internal/services"
+	"goth-todo/internal/core/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

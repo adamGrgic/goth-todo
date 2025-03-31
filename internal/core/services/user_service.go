@@ -1,10 +1,9 @@
 package services
 
 import (
-	"goth-todo/internal/models"
-	"goth-todo/internal/repository"
-
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
+	"goth-todo/internal/core/models"
+	"goth-todo/internal/core/repository"
 )
 
 type UserService interface {
@@ -25,12 +24,7 @@ func (r *UserServiceImpl) GetUser(user *models.User, email string, password stri
 	// Look up user
 
 	if err := r.Repo.GetUser(user, email, password); err != nil {
-		return err
-	}
-
-	// Check password (assuming it's hashed)
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		// c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		fmt.Println("Repo GetUser returned error: ", err)
 		return err
 	}
 

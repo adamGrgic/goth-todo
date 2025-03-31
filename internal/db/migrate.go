@@ -1,7 +1,7 @@
 package db
 
 import (
-	"goth-todo/internal/models"
+	"goth-todo/internal/core/models"
 )
 
 func Migrate() {

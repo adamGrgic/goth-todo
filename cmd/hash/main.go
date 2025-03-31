@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 )
 
+// Created this while experimenting with css/js build processes.
+// Decided to use bun for handling everything, but keeping this around for reference.
 func main() {
 	// Get the working directory where the command is being run
 	wd, err := os.Getwd()

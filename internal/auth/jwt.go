@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,20 +17,14 @@ type CustomClaims struct {
 }
 
 func GetUserToken(c *gin.Context) *string {
-	token, exists := c.Get("jwt_token")
-	if !exists {
+	token, err := c.Cookie("jwt_token")
+	if err != nil {
 		return nil
 	}
-
-	strToken, ok := token.(string)
-	if !ok {
-		return nil
-	}
-
-	return &strToken
+	return &token
 }
 
-func GenerateJWT(username string) (string, error) {
+func SetUserJWT(c *gin.Context, username string) error {
 	claims := CustomClaims{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -38,7 +34,27 @@ func GenerateJWT(username string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(JwtKey)
+	signedToken, err := token.SignedString(JwtKey)
+	if err != nil {
+		fmt.Println("Error signing token:", err)
+		return err
+	}
+
+	c.Set("jwt_token", signedToken)
+	fmt.Println("JWT set:", signedToken)
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "jwt_token",
+		Value:    signedToken,
+		MaxAge:   3600,
+		Path:     "/",
+		Domain:   "192.168.0.26",
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return nil
 }
 
 // func GetUser(c *gin.Context) {

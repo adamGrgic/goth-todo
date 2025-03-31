@@ -1,8 +1,11 @@
 package repository
 
 import (
-	"goth-todo/internal/models"
+	"errors"
+	"fmt"
+	"goth-todo/internal/core/models"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +18,26 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (r *UserRepository) GetUser(user *models.User, username string, password string) error {
-	err := r.DB.Find(&user).Error
-	return err
+	fmt.Println("UserRepository search user: ", username)
+
+	err := r.DB.
+		Where("email = ?", username). // assuming you're matching by email
+		First(&user).Error
+	fmt.Println("value of user pointer after DB find: ", user.Email)
+
+	if err != nil {
+		fmt.Println("User not found or error: ", err)
+		return err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		fmt.Println("Invalid password")
+		return errors.New("invalid credentials")
+	}
+
+	fmt.Println("User successfully validated: ", &user.Email)
+	return nil
 }
 
 // func (r *UserRepository) GetUser(user models.User, email string, password string) error {

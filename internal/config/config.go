@@ -1,12 +1,15 @@
 package config
 
 import (
+	"goth-todo/internal/core/repository"
+	"goth-todo/internal/core/services"
 	"goth-todo/internal/handlers"
 	"goth-todo/internal/middleware"
-	"goth-todo/internal/repository"
-	"goth-todo/internal/services"
+	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +18,33 @@ type App struct {
 	DB     *gorm.DB
 }
 
+// for later
+type Repositories struct {
+	UserRepo repository.UserRepository
+	TaskRepo repository.TaskRepository
+}
+
+type Services struct {
+	UserService services.UserService
+}
+
+type Handlers struct {
+	UserHandler handlers.UserHandler
+}
+
+func loadEnv() {
+	// Optional: only load .env in local environments
+	if os.Getenv("APP_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("No .env file found, assuming CI/production")
+		}
+	}
+}
+
 func RunApp(db *gorm.DB) *App {
+
+	loadEnv()
+
 	r := gin.Default()
 	r.Static("/public", "./public")
 	r.Use(middleware.Logger())

@@ -3,10 +3,11 @@ package handlers
 import (
 	"fmt"
 	"goth-todo/internal/auth"
-	"goth-todo/internal/models"
-	"goth-todo/internal/services"
+	"goth-todo/internal/core/models"
+	"goth-todo/internal/core/services"
 	templates "goth-todo/internal/templates/layouts"
-	"goth-todo/internal/templates/pages"
+	"goth-todo/internal/templates/viewmodels"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,29 +36,36 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 func (h *UserHandler) Login(c *gin.Context) {
 	fmt.Println("Login method running")
 
-	// Parse form values
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	var user models.User
+	fmt.Println("form email: ", email)
+	fmt.Println("form password: ", password)
 
+	var user models.User
 	h.UserService.GetUser(&user, email, password)
+	fmt.Println("retrieved user: ", user.Email)
 
 	if user.Email == "" {
-		templates.LoginError().Render(c.Request.Context(), c.Writer)
+		fmt.Println("User not found, please try again.")
+		model := viewmodels.Login{
+			Username: email,
+			ErrorMsg: "User not found, please try again.",
+		}
+		templates.Login(model).Render(c.Request.Context(), c.Writer)
 		return
 	}
 
-	// Generate JWT
-	token, err := auth.GenerateJWT(user.Email)
+	// ✅ Generate JWT
+	err := auth.SetUserJWT(c, user.Email)
 	if err != nil {
-		// c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		c.String(http.StatusInternalServerError, "Could not generate token")
 		return
 	}
 
-	c.Set("jwt_token", token)
-
-	templates.Layout(c, "Home", pages.Home()).Render(c.Request.Context(), c.Writer)
+	// ✅ Redirect with HTMX
+	c.Header("HX-Redirect", "/")
+	c.Status(http.StatusOK)
 }
 
 func (h *UserHandler) Register(c *gin.Context) {

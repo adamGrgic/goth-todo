@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"goth-todo/internal/core/models"
+	"goth-todo/internal/core/services"
 	"goth-todo/internal/db"
-	"goth-todo/internal/models"
-	"goth-todo/internal/services"
 	tasks_vc "goth-todo/internal/templates/components/todos"
 
 	// "goth-todo/server/templates"

@@ -3,6 +3,7 @@ package main
 import (
 	"goth-todo/internal/config"
 	"goth-todo/internal/db"
+	"os"
 )
 
 var statusCache map[int]string
@@ -32,5 +33,5 @@ func main() {
 
 	app := config.RunApp(db.DB)
 
-	app.Router.Run(":9090")
+	app.Router.Run(os.Getenv("PORT"))
 }

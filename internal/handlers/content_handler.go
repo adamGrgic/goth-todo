@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"goth-todo/internal/services"
+	"goth-todo/internal/core/services"
 	templates "goth-todo/internal/templates/layouts"
 	"goth-todo/internal/templates/pages"
 

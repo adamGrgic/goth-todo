@@ -4,16 +4,18 @@ import (
 	"goth-todo/internal/middleware"
 	"goth-todo/internal/media"
 	"goth-todo/internal/auth"
+	"goth-todo/internal/templates/viewmodels"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
-templ LoginError() {
-	<div class="text-danger">Username or password is incorrect</div>
-}
 
 templ Layout(c *gin.Context, title string, content templ.Component) {
 	
-	{{ token := auth.GetUserToken(c)}}
+	{{
+		token := auth.GetUserToken(c)
+		fmt.Println("token retrieved in layout: ", token)
+	}}
 
 	<!DOCTYPE html>
 	<html lang="en">
@@ -33,51 +35,52 @@ templ Layout(c *gin.Context, title string, content templ.Component) {
 			if token != nil {
 				@content
 			} else {
-				@login()
+				@Login(viewmodels.Login{})
 			}
 			
 		</main>
 
-		// <footer>
-		// 	<div class="col-12 d-flex flex-row justify-content-center">
-		// 		<p>Goth Stack Todo Application</p>
-		// 	</div>
-		// </footer>
+		<footer>
+			// <div class="col-12 d-flex flex-row justify-content-center">
+			// 	<p>Goth Stack Todo Application</p>
+			// </div>
+		</footer>
 	</body>
 	</html>
 
     <script src={media.GetJsFile("forms")} nonce={middleware.GetJsNonce(c)}></script>
 }
 
-templ login() {
-	<div class="login-wrapper col-6 container m-auto">
-		<div class="col-12 mt-1 d-flex flex-row justify-content-center">
-			<p>Goth Stack Todo Application</p>
-		</div>
-		<div class="card p-4">
-			// <li>
-			// 	<a class="" href="/register">Register</a>
-			// </li>
-			<form hx-post="/user/login" 
-				hx-target="#login-error">
-				<div class="mb-3">
-					<label for="exampleInputEmail1" class="form-label">Email address</label>
-					<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+templ Login( model viewmodels.Login) {
+	<div id="login-gateway" class="d-flex col-12">
+		<div class="login-wrapper col-6 container m-auto">
+			<div class="col-12 mt-1 d-flex flex-row justify-content-center">
+				<p>Goth Stack Todo Application</p>
+			</div>
+			<div class="card p-4">
+				<form hx-post="/user/login" 
+					hx-target="#login-gateway"
+					hx-swap="outerHTML">
+					<div class="mb-3">
+						<label for="exampleInputEmail1" class="form-label">Email address</label>
+						<input name="email" value={model.Username} type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+					</div>
+					<div class="mb-3">
+						<label for="exampleInputPassword1" class="form-label">Password</label>
+						<input name="password" type="password" class="form-control" id="exampleInputPassword1" required>
+					</div>
+					<button class="btn btn-primary">Login</button>
+					<button class="btn btn-secondary">Register</button>
+				</form>
+			</div>
+			if model.ErrorMsg != "" {
+				<div class="text-danger text-center">
+					{ model.ErrorMsg }
 				</div>
-				<div class="mb-3">
-					<label for="exampleInputPassword1" class="form-label">Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1">
-				</div>
-				<button class="btn btn-primary">Login</button>
-				<button class="btn btn-secondary">Register</button>
-			</form>
-
-		</div>
-		<div id="login-error">
-
+			}
 		</div>
 		
-
+		
 	</div>
 	
 }

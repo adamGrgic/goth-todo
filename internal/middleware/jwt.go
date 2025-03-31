@@ -4,6 +4,9 @@ import (
 	// "net/http"
 	// "strings"
 
+	"goth-todo/internal/auth"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	// "github.com/golang-jwt/jwt/v5"
 	// "goth-todo/internal/auth"
@@ -11,11 +14,11 @@ import (
 
 func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// authHeader := c.GetHeader("Authorization")
-		// if authHeader == "" {
-		// 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
-		// 	return
-		// }
+		token := auth.GetUserToken(c)
+		if token == nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+			return
+		}
 
 		// parts := strings.Split(authHeader, " ")
 		// if len(parts) != 2 || parts[0] != "Bearer" {

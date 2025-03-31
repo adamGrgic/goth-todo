@@ -11,9 +11,8 @@ import (
 type User struct {
 	// ID          uint   `gorm:"primaryKey" json:"id"`
 	gorm.Model
-	ID       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	Email    string    `gorm:"uniqueIndex;not null"`
-	Password string    `gorm:"not null"` // Hashed if using email/password
+	Email    string `gorm:"uniqueIndex;not null"`
+	Password string `gorm:"not null"` // Hashed if using email/password
 }
 
 // RefreshToken model for tracking active sessions

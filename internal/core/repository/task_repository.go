@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"goth-todo/internal/models"
+	"goth-todo/internal/core/models"
 
 	"gorm.io/gorm"
 )

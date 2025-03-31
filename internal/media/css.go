@@ -3,7 +3,7 @@ package media
 import (
 	"encoding/json"
 	"fmt"
-	"goth-todo/internal/models"
+	"goth-todo/internal/core/models"
 	"io"
 	"os"
 	"path/filepath"
