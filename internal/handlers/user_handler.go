@@ -3,10 +3,9 @@ package handlers
 import (
 	"fmt"
 	"goth-todo/internal/auth"
+	login_vc "goth-todo/internal/components/login"
 	"goth-todo/internal/core/models"
 	"goth-todo/internal/core/services"
-	templates "goth-todo/internal/templates/layouts"
-	"goth-todo/internal/templates/viewmodels"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -48,11 +47,11 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	if user.Email == "" {
 		fmt.Println("User not found, please try again.")
-		model := viewmodels.Login{
+		model := login_vc.Model{
 			Username: email,
 			ErrorMsg: "User not found, please try again.",
 		}
-		templates.Login(model).Render(c.Request.Context(), c.Writer)
+		login_vc.HTML(model).Render(c.Request.Context(), c.Writer)
 		return
 	}
 

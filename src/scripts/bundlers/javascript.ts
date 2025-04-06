@@ -1,45 +1,25 @@
 import { readdir, writeFile, mkdir, unlink } from "fs/promises";
 import { existsSync } from "fs";
 import { join, extname, basename } from "path";
-import { createHash } from 'crypto';
-import { mkdirSync, writeFileSync, readFileSync, watch} from 'fs';
-import path, {  resolve } from 'path';
+import { writeFileSync, readFileSync, watch} from 'fs';
+import path from 'path';
 import { argv } from 'process';
-import { rm } from "node:fs/promises";
 import type { Dirent } from "node:fs";
+import { requireEnv } from "../utils/env";
+import { getHash, deleteHashedFiles } from "../utils/hash";
 
-
-const INPUT_DIR = "./src/scripts/js";
-const OUTPUT_DIR = "./public/scripts/bun";
-const MANIFEST_PATH = "./public/manifest.json";
-
-const manifest: Record<string, string> = {};
+const INPUT_DIR_JS = requireEnv("INPUT_DIR_JS");
+const OUTPUT_DIR_JS = requireEnv("OUTPUT_DIR_JS");
+const MANIFEST_PATH = requireEnv("MEDIA_MANIFEST_PATH")
 
 async function ensureOutputDir() {
-  if (!existsSync(OUTPUT_DIR)) {
-    await mkdir(OUTPUT_DIR, { recursive: true });
+  if (!existsSync(OUTPUT_DIR_JS)) {
+    await mkdir(OUTPUT_DIR_JS, { recursive: true })
   }
 }
 
-function getHash(content: string): string {
-  return createHash("md5").update(content).digest("hex").slice(0, 8);
-}
-
-async function deleteHashedFiles(outputDir: string, logicalName: string) {
-    const files = await readdir(outputDir);
-  
-    const pattern = new RegExp(`^${logicalName}\\.[a-f0-9]{8}\\.js$`);
-  
-    for (const file of files) {
-      if (pattern.test(file)) {
-        await unlink(join(outputDir, file));
-        console.log(`🗑️  Deleted old build: ${file}`);
-      }
-    }
-  }
-
-async function compileFile(entry : Dirent, fullPath: string) {
-  const relativePath = fullPath.replace(INPUT_DIR + "/", "");
+async function compileFile(entry: Dirent, fullPath: string): Promise<[string, string] | null> {
+  const relativePath = fullPath.replace(INPUT_DIR_JS + "/", "");
   const logicalName = basename(entry.name, ".ts");
 
   const result = await Bun.build({
@@ -50,64 +30,73 @@ async function compileFile(entry : Dirent, fullPath: string) {
 
   if (!result.success || result.outputs.length === 0) {
     console.error(`❌ Failed to build: ${relativePath}`);
-    return;
+    return null;
   }
 
   const outputContent = await result!.outputs[0]!.text();
-      const hash = getHash(outputContent);
-      const hashedName = `${logicalName}.${hash}.js`;
-      const outputPath = join(OUTPUT_DIR, hashedName);
-      const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'));
-    //   console.log(`DEBUG: logical name: ${logicalName}`);
-    //   console.log(`DEBUG: hashedName: ${hashedName}`);
-    //   console.log(`DEBUG: manifest[logicalName]: ${manifest[logicalName]}`);
-      
-      if (manifest[logicalName].includes(hashedName)) {
-            // console.log(`DEBUG: compiled file ${hashedName} already exists, continuing...`)
-            return;
-      }
-      await deleteHashedFiles(OUTPUT_DIR, logicalName);
+  const hash = getHash(outputContent);
+  const hashedFilename = `${logicalName}.${hash}.js`;
+  const outputPath = join(OUTPUT_DIR_JS!, hashedFilename);
 
-      await writeFile(outputPath, outputContent);
-      
-      manifest[logicalName] = outputPath; 
-      writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+  console.log("[VERBOSE DEBUG] JS Content: ", outputContent)
+  console.log("[VERBOSE DEBUG] hash: ", hash)
+  console.log("[VERBOSE DEBUG] hashedFilename: ", hashedFilename)
+  console.log("[VERBOSE DEBUG] outputPath: ", outputPath)
 
-      console.log(`✅ Compiled ${relativePath} → ${hashedName}`);
+  await deleteHashedFiles(INPUT_DIR_JS!, logicalName, "js");
+  writeFileSync(outputPath, outputContent);
+
+  console.log(`✅ Compiled ${relativePath} → ${hashedFilename}`);
+  return [logicalName, outputPath];
 }
 
-async function walkAndCompile(dir: string) {
+async function walkAndCompile(dir: string): Promise<[string, string][]> {
   const entries = await readdir(dir, { withFileTypes: true });
-  const compileJobs: Promise<void>[] = [];
+  const compileJobs: Promise<[string, string] | null>[] = [];
 
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      compileJobs.push(walkAndCompile(fullPath));
+      const nestedResults = await walkAndCompile(fullPath); // await here
+      for (const result of nestedResults) {
+        compileJobs.push(Promise.resolve(result));
+      }
     } else if (entry.isFile() && extname(entry.name) === ".ts") {
-      
-      compileJobs.push(compileFile(entry,fullPath))
+      compileJobs.push(compileFile(entry, fullPath));
     }
   }
-}
 
+  const results = await Promise.all(compileJobs);
+  return results.filter((r): r is [string, string] => r !== null);
+}
+  
 async function run() {
-  console.clear();
-  console.log("🚀 Starting TS compiler...\n");
+  console.log("🚀 Starting TS compiler...");
 
-  await ensureOutputDir();
-  await walkAndCompile(INPUT_DIR);
+  await ensureOutputDir()
 
-  console.log("\n✅ All done!");
+  const entries = await walkAndCompile(INPUT_DIR_JS!);
+
+  let manifest: Record<string, string> = {};
+  if (existsSync(MANIFEST_PATH)) {
+    manifest = JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
+  }
+
+  for (const [logicalName, outputPath] of entries) {
+    manifest[`js:${logicalName}`] = outputPath;
+  }
+
+  writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+  console.log("✅ All done!");
 }
-
 
 if (argv.includes('--watch')) {
     // console.log(' watch flag given');
+
     run();
     // console.log(path.dirname(INPUT_DIR));
-    watch(path.dirname(INPUT_DIR), { recursive: true }, (event, filename) => {
+    watch(path.dirname(INPUT_DIR_JS!), { recursive: true }, (event, filename) => {
     if (filename && filename.endsWith('.ts')) {
       console.log(`🔄 Change detected in ${filename}, recompiling...`);
       run();

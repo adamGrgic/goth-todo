@@ -1,0 +1,9 @@
+{
+  "css:layout": "public/styles/layout.d669cffd.css",
+  "css:login": "public/styles/login.c579d61b.css",
+  "htmx.min": "public/scripts/htmx/htmx.min.7e9c374d.js",
+  "js:forms": "public/scripts/bun/forms.36c66817.js",
+  "js:login": "public/scripts/bun/login.58ff4a9f.js",
+  "js:todo": "public/scripts/bun/todo.3ee6107b.js",
+  "response-targets": "public/scripts/htmx/response-targets.52c8a3be.js"
+}

@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	tasks_vc "goth-todo/internal/components/todos"
 	"goth-todo/internal/core/models"
 	"goth-todo/internal/core/services"
 	"goth-todo/internal/db"
-	tasks_vc "goth-todo/internal/templates/components/todos"
 
 	// "goth-todo/server/templates"
 	"log"
@@ -44,7 +44,7 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 		log.Println("Something went wrong getting tasks")
 	}
 	db.DB.Find(&tasks)
-	tasks_vc.Tasks(c, tasks).Render(c, c.Writer)
+	tasks_vc.HTML(c, tasks).Render(c, c.Writer)
 
 }
 
@@ -65,7 +65,7 @@ func (h *TaskHandler) AddTask(c *gin.Context) {
 	}
 
 	db.DB.Find(&tasks)
-	tasks_vc.Tasks(c, tasks).Render(c, c.Writer)
+	tasks_vc.HTML(c, tasks).Render(c, c.Writer)
 }
 
 // Toggles task status

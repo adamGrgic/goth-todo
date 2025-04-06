@@ -46,7 +46,7 @@ func SetUserJWT(c *gin.Context, username string) error {
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:     "jwt_token",
 		Value:    signedToken,
-		MaxAge:   3600,
+		MaxAge:   10000,
 		Path:     "/",
 		Domain:   "192.168.0.26",
 		Secure:   false,

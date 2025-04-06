@@ -5,13 +5,14 @@ import (
     "goth-todo/internal/core/models"
 )
 
-templ Tasks(c *gin.Context, tasks []models.Task) {
+templ HTML(c *gin.Context, tasks []models.Task) {
     <table class="table">
         <thead>
             <tr>
-                <th>Title</th>
+                <th class="text-center">Title</th>
                 <th>Description</th>
-                <th>Actions</th>
+                <th class="text-right">Status</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody hx-target="this" hx-swap="outerHTML">

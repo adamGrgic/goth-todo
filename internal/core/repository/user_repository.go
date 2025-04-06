@@ -36,7 +36,7 @@ func (r *UserRepository) GetUser(user *models.User, username string, password st
 		return errors.New("invalid credentials")
 	}
 
-	fmt.Println("User successfully validated: ", &user.Email)
+	fmt.Println("User successfully validated: ", user.Email)
 	return nil
 }
 

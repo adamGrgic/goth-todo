@@ -4,50 +4,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"goth-todo/internal/core/models"
-	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/rs/zerolog/log"
 )
 
 var manifest models.Manifest
 
-func GetCSSHashFile() string {
+func GetCSSFile(file string) string {
 
-	wd, err := os.Getwd()
+	manifestPath := os.Getenv("MEDIA_MANIFEST_PATH")
+
+	absolutePath, err := filepath.Abs(manifestPath)
 	if err != nil {
-		fmt.Println("Error getting working directory:", err)
-		os.Exit(1)
+		log.Fatal().
+			Err(err).
+			Str("manifestPath", manifestPath).
+			Str("absolutePath", absolutePath).
+			Msg("Unable to retrieve media manifest file")
 	}
 
-	file := "public/manifest.json"
-
-	manifestPath, err := filepath.Abs(filepath.Join(wd, file))
+	f, err := os.Open(absolutePath)
 	if err != nil {
-		fmt.Println("Error resolving manifest path:", err)
+		log.Fatal().Msg("This is a fatal log")
+	}
+	defer f.Close()
+
+	var manifest map[string]string
+	if err := json.NewDecoder(f).Decode(&manifest); err != nil {
+		log.Fatal().Msg("This is a fatal log")
+	}
+
+	key := "css:" + file
+	val, ok := manifest[key]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "❌ Key '%s' not found in manifest\n", key)
 		os.Exit(1)
 	}
 
-	// Check if the file exists before proceeding
-	if _, err := os.Stat(manifestPath); os.IsNotExist(err) {
-		fmt.Println("Error: manifest file not found at", manifestPath)
-		os.Exit(1)
-	}
-
-	// Save the hashed filename in a JSON manifest
-	fmt.Printf("Getting file from %s", manifestPath)
-
-	jsonData, err := os.Open(manifestPath)
-
-	if err != nil {
-		fmt.Println("Error opening manifest:", err)
-		os.Exit(1)
-	}
-
-	defer jsonData.Close()
-
-	manifestBytes, _ := io.ReadAll(jsonData)
-
-	json.Unmarshal(manifestBytes, &manifest)
-
-	return fmt.Sprintf("/public/styles/%s", manifest.CSS)
+	return val
 }

@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-print-directory
+
 # MAIN
 run:
 	air
@@ -8,9 +10,12 @@ debug:
 check-env:
 	@go run ./cmd/check/main.go
 
-clean:
+kill-server:
 	@pkill -f "air" || true
 	@pkill -f "main" || true
+
+build:
+	@go run ./cmd/build/main.go
 
 # CLIENT
 css:
@@ -24,6 +29,9 @@ js:
 
 js-watch:
 	@./bin/javascript-compiler --watch
+
+htmx:
+	@go run ./cmd/htmx/main.go
 
 templ:
 	@templ generate

@@ -3,7 +3,10 @@ package main
 import (
 	"goth-todo/internal/config"
 	"goth-todo/internal/db"
+	"goth-todo/internal/logging"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 var statusCache map[int]string
@@ -28,6 +31,10 @@ var statusCache map[int]string
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+	godotenv.Load()
+
+	logging.ConfigureLogging()
+
 	db.ConnectDB()
 	db.Migrate()
 

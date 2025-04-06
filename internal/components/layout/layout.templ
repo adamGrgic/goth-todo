@@ -1,0 +1,63 @@
+package layout_vc
+
+import (
+	"goth-todo/internal/middleware"
+	"goth-todo/internal/media"
+	"goth-todo/internal/auth"
+	"fmt"
+	"goth-todo/internal/components/login"
+	"github.com/gin-gonic/gin"
+)
+
+type Model struct {
+	Context   *gin.Context
+	Title     string
+	Component templ.Component
+}
+
+templ nav() {
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">Todo Home</a>
+			<!-- Rest of navbar -->
+		</div>
+	</nav>
+}
+
+templ HTML( model Model ) {
+	
+	{{
+		token := auth.GetUserToken(model.Context)
+		fmt.Println("token retrieved in layout: ", token)
+	}}
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>{ model.Title }</title>
+		<script src={ media.GetHTMX()} nonce={ middleware.GetHtmxNonce( model.Context ) }></script>
+        <script src={ media.GetHTMXResponseTargets() } nonce={ middleware.GetResponseTargetsNonce( model.Context ) }></script>
+		<link rel="stylesheet" href={ media.GetCSSFile("layout") } nonce={ middleware.GetCssNonce( model.Context ) }>
+	</head>
+	<body>
+		if token != nil {
+			@nav()
+			<main>
+				@model.Component
+			</main>
+		} else {
+			@login_vc.HTML(login_vc.Model{ Context : model.Context})
+		}
+
+		<footer>
+			// <div class="col-12 d-flex flex-row justify-content-center">
+			// 	<p>Goth Stack Todo Application</p>
+			// </div>
+		</footer>
+	</body>
+	</html>
+
+    <script src={media.GetJsFile("forms")} nonce={middleware.GetJsNonce(model.Context)}></script>
+}
+

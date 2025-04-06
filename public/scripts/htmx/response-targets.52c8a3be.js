@@ -1,4 +1,5 @@
 (function(){
+
     /** @type {import("../htmx").HtmxInternalApi} */
     var api;
 
