@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	home_vc "goth-todo/internal/components/home"
+	dashboard_vc "goth-todo/internal/components/dashboard"
 	layout_vc "goth-todo/internal/components/layout"
 	"goth-todo/internal/core/services"
 
@@ -22,13 +22,15 @@ func NewContentHandlers() *ContentHandlers {
 // @Produce      html
 // @Success      200 {string} string "HTML content"
 // @Router       / [get]
-func (h *ContentHandlers) GetHomePage(c *gin.Context) {
+func (h *ContentHandlers) GetDashboardPage(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "text/html")
+
+	dashboard_model := dashboard_vc.Model{Context: c}
 
 	model := layout_vc.Model{
 		Context:   c,
 		Title:     "Home",
-		Component: home_vc.HTML(),
+		Component: dashboard_vc.HTML(dashboard_model),
 	}
 
 	layout_vc.HTML(model).Render(c.Request.Context(), c.Writer)

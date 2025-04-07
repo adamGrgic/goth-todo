@@ -3,14 +3,11 @@ package media
 import (
 	"encoding/json"
 	"fmt"
-	"goth-todo/internal/core/models"
 	"os"
 	"path/filepath"
 
 	"github.com/rs/zerolog/log"
 )
-
-var manifest models.Manifest
 
 func GetCSSFile(file string) string {
 

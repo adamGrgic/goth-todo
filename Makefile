@@ -61,7 +61,7 @@ bundler-css-test:
 # Config
 MIGRATE_BIN=migrate
 MIGRATIONS_DIR=./internal/db/migrations
-DB_URL=postgres://postgres:Hockey7232%21@localhost:5432/goth-todo?sslmode=disable
+DB_URL=postgres://postgres:psql@localhost:5432/goth-todo?sslmode=disable
 
 # Usage:
 # make migrate-create name=create_users_table

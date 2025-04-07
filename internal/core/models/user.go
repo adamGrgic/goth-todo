@@ -4,21 +4,27 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 // User model for authentication
 type User struct {
-	// ID          uint   `gorm:"primaryKey" json:"id"`
-	gorm.Model
-	Email    string `gorm:"uniqueIndex;not null"`
-	Password string `gorm:"not null"` // Hashed if using email/password
+	ID        uuid.UUID  `json:"id"`
+	Email     string     `json:"email"`
+	FirstName string     `json:"first_name"`
+	LastName  string     `json:"last_name"`
+	Password  string     `json:"password"`
+	AccountId uuid.UUID  `json:"account_id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }
 
 // RefreshToken model for tracking active sessions
 type RefreshToken struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	UserID    uuid.UUID `gorm:"type:uuid;not null"`
-	Token     string    `gorm:"uniqueIndex;not null"`
-	ExpiresAt time.Time `gorm:"not null"`
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

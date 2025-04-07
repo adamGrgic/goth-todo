@@ -1,7 +1,19 @@
-package home_vc
+package dashboard_vc
 
-templ HTML() {
-    <div id="home-page" class="d-flex flex-column col-12">
+import "github.com/gin-gonic/gin"
+
+import(
+    "goth-todo/internal/media"
+    "goth-todo/internal/middleware"
+)
+
+type Model struct {
+    Context *gin.Context
+
+}
+
+templ HTML(model Model) {
+    <div id="dashboard" class="d-flex flex-column col-12">
         <section>
             <form 
                 id="task-form" 
@@ -10,7 +22,7 @@ templ HTML() {
                 hx-target="#task-list" 
                 hx-swap="outerHTML" 
                 class="flex">
-                <div class="d-flex flex-row gap-1">
+                <div class="">
                     <input type="text" name="title" class="form-control" placeholder="Title" required>
                     <input type="text" name="description" class="form-control" placeholder="Description" required>
                     <button type="submit" class="btn btn-primary">Add</button>
@@ -18,17 +30,23 @@ templ HTML() {
             </form>
         </section>
 
-        <section class="mt-4">
-            <div class="col-12">
+        <section class="">
+            <div class="">
                 <div 
                     id="task-list" 
                     hx-get="/task/get"
                     hx-trigger="load"
-                    hx-swap="outerHTML">
+                    hx-swap="innerHTML">
                     <p class="text-gray-400">Loading tasks...</p>
                 </div>
             </div>
         </section>
     </div>
+
+    <link rel="stylesheet" 
+		href={ media.GetCSSFile("dashboard")} 
+		nonce={middleware.GetCssNonce(model.Context)} 
+		hx-swap-oob="true">
+	</link>
 
 }

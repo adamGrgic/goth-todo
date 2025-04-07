@@ -1,17 +1,15 @@
 package handlers
 
 import (
-	"fmt"
+	"context"
 	tasks_vc "goth-todo/internal/components/todos"
 	"goth-todo/internal/core/models"
 	"goth-todo/internal/core/services"
-	"goth-todo/internal/db"
 
 	// "goth-todo/server/templates"
-	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type TaskHandler struct {
@@ -38,46 +36,49 @@ func NewTaskHandler(taskService services.TaskService) *TaskHandler {
 
 // Loads full page with tasks
 func (h *TaskHandler) GetTasks(c *gin.Context) {
-	log.Println("Getting tasks")
-	tasks, err := h.TaskService.GetTasks()
-	if err != nil {
-		log.Println("Something went wrong getting tasks")
-	}
-	db.DB.Find(&tasks)
-	tasks_vc.HTML(c, tasks).Render(c, c.Writer)
+	log.Info().Msg("Getting tasks")
 
+	ctx := context.Background()
+
+	tasks, err := h.TaskService.GetTasks(ctx)
+	if err != nil {
+		log.Info().Msg("Something went wrong getting tasks")
+	}
+
+	tasks_vc.HTML(c, tasks).Render(c, c.Writer)
 }
 
 // Handles adding a new task
 func (h *TaskHandler) AddTask(c *gin.Context) {
 	var task models.Task
 	if err := c.ShouldBind(&task); err != nil {
-		fmt.Println("Add task failed")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Error().Err(err).Msg("Add task failed")
+		// c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	h.TaskService.AddTask(&task)
+	ctx := context.Background()
 
-	tasks, err := h.TaskService.GetTasks()
+	h.TaskService.AddTask(ctx, &task)
+
+	tasks, err := h.TaskService.GetTasks(ctx)
 	if err != nil {
-		log.Println("Something went wrong getting tasks")
+		log.Error().Err(err).Msg("Something went wrong getting tasks")
 	}
 
-	db.DB.Find(&tasks)
 	tasks_vc.HTML(c, tasks).Render(c, c.Writer)
 }
 
 // Toggles task status
-func (h *TaskHandler) ToggleTask(c *gin.Context) {
-	id := c.Param("id")
-	h.TaskService.ToggleTask(id)
-	// h.RenderTaskList(c)
-}
+// func (h *TaskHandler) ToggleTask(c *gin.Context) {
+// 	id := c.Param("id")
+// 	h.TaskService.ToggleTask(id)
+// 	// h.RenderTaskList(c)
+// }
 
-// Deletes a task
-func (h *TaskHandler) DeleteTask(c *gin.Context) {
-	// id := c.Param("id")
-	// h.TaskService.DeleteTask(id)
-	// h.RenderTaskList(c)
-}
+// // Deletes a task
+// func (h *TaskHandler) DeleteTask(c *gin.Context) {
+// 	// id := c.Param("id")
+// 	// h.TaskService.DeleteTask(id)
+// 	// h.RenderTaskList(c)
+// }

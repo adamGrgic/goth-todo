@@ -1,14 +1,15 @@
 package services
 
 import (
+	"context"
 	"goth-todo/internal/core/models"
 	"goth-todo/internal/core/repository"
 )
 
 type TaskService interface {
-	GetTasks() ([]models.Task, error)
-	AddTask(task *models.Task) error
-	ToggleTask(id string) error
+	GetTasks(context context.Context) ([]models.Task, error)
+	AddTask(context context.Context, task *models.Task) error
+	// ToggleTask(id string) error
 }
 
 type TaskServiceImpl struct {
@@ -21,17 +22,17 @@ func NewTaskService(taskRepo repository.TaskRepository) TaskService {
 	}
 }
 
-func (s *TaskServiceImpl) GetTasks() ([]models.Task, error) {
-	return s.Repo.GetTasks()
+func (s *TaskServiceImpl) GetTasks(context context.Context) ([]models.Task, error) {
+	return s.Repo.GetTasks(context)
 }
 
-func (s *TaskServiceImpl) AddTask(task *models.Task) error {
-	return s.Repo.AddTask(task)
+func (s *TaskServiceImpl) AddTask(context context.Context, task *models.Task) error {
+	return s.Repo.AddTask(context, task)
 }
 
-func (s *TaskServiceImpl) ToggleTask(id string) error {
-	return s.Repo.ToggleTask(id)
-}
+// func (s *TaskServiceImpl) ToggleTask(id string) error {
+// 	return s.Repo.ToggleTask(id)
+// }
 
 // func (s *TaskServiceImpl) DeleteTask(id string) error {
 // 	return s.Repo.DeleteTask(id)

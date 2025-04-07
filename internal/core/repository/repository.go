@@ -1,9 +1,7 @@
 package repository
 
-import (
-	"gorm.io/gorm"
-)
+import "github.com/jackc/pgx/v5/pgxpool"
 
-func RegisterRepositories(db *gorm.DB) {
+func RegisterRepositories(db *pgxpool.Pool) {
 	NewTaskRepository(db)
 }

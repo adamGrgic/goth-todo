@@ -36,7 +36,6 @@ func main() {
 	logging.ConfigureLogging()
 
 	db.ConnectDB()
-	db.Migrate()
 
 	app := config.RunApp(db.DB)
 

@@ -1,62 +1,49 @@
 package db
 
 import (
+	"context"
 	"fmt"
-	"goth-todo/internal/core/models"
-	"log"
+	"os"
+	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 )
 
-var DB *gorm.DB
+var DB *pgxpool.Pool
 
+// ConnectDB initializes the pgx pool connection
 func ConnectDB() {
-	dsn := "host=localhost user=goth password=Hockey7232! dbname=goth-todo port=5432"
+	dsn := os.Getenv("DB_URL") // or hardcode for now
+	if dsn == "" {
+		log.Fatal().Msg("No DB environment variable setup")
+	}
+
+	log.Info().Str("dsn", dsn).Msg("database url")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err = pgxpool.New(ctx, dsn)
 	if err != nil {
-		log.Fatal("❌ Failed to connect to the database:", err)
-	}
-	fmt.Println("✅ Connected to PostgreSQL")
-}
-
-// InitializeDB sets up the database connection
-func InitializeDB() {
-	var err error
-	DB, err = gorm.Open(sqlite.Open("tasks.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Failed to open database:", err)
+		log.Fatal().Msg("❌ Failed to connect to the database")
 	}
 
-	log.Println("Database connection established")
-
-	// Auto-migrate models
-	MigrateDB()
-}
-
-// MigrateDB applies automatic migrations
-func MigrateDB() {
-	err := DB.AutoMigrate(&models.Task{})
-	if err != nil {
-		log.Fatal("Migration failed: ", err)
+	if err := DB.Ping(ctx); err != nil {
+		log.Fatal().Msg("❌ Unable to ping DB")
 	}
 
-	log.Println("Database migration complete")
+	fmt.Println("✅ Connected to PostgreSQL with pgx")
 }
 
-// GetDB returns the global database instance
-func GetDB() *gorm.DB {
+func GetDB() *pgxpool.Pool {
 	return DB
 }
 
 func CloseDB() {
-	sqlDB, err := DB.DB() // Get underlying sql.DB
-	if err != nil {
-		log.Println("Error getting database connection:", err)
-		return
+	if DB != nil {
+		DB.Close()
+		log.Info().Msg("Database connection closed")
 	}
-	sqlDB.Close()
-	log.Println("Database connection closed")
 }

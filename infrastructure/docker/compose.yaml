@@ -1,37 +1,3 @@
-# version: "3.8"
-# services:
-#   db:
-#     image: postgres:15
-#     container_name: goth-todo-db
-#     restart: always
-#     environment:
-#       POSTGRES_USER: goth
-#       POSTGRES_PASSWORD: Hockey7232!
-#       POSTGRES_DB: goth-todo
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U goth -d goth-todo"]
-#       interval: 10s
-#       retries: 5
-
-
-#   goth-todo:
-#     build: .
-#     container_name: goth-todo
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#     environment:
-#       DATABASE_URL: postgres://goth:Hockey7232!@db:5432/goth-todo
-#     ports:
-#       - "8080:8080"
-
-# volumes:
-#   db-data:
-
 version: "3.8"
 
 services:
@@ -43,9 +9,9 @@ services:
     environment:
       # These environment variables will be accessible in your Go code.
       - POSTGRES_HOST=localhost
-      - POSTGRES_USER=goth
+      - POSTGRES_USER=postgres
       - POSTGRES_PORT=5432
-      - POSTGRES_PASSWORD=Hockey7232!
+      - POSTGRES_PASSWORD=psql
       - POSTGRES_DB=goth-todo
     depends_on:
       - postgres
@@ -56,7 +22,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Hockey7232!
+      - POSTGRES_PASSWORD=psql
       - POSTGRES_DB=goth_todo
     ports:
     - "5432:5432"

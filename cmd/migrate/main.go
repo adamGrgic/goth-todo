@@ -8,10 +8,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"gorm.io/gorm"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var DB *gorm.DB
+var DB *pgxpool.Pool
 var dir = "./internal/db/migrations"
 
 // use this instead of makefile for more complex workflows
@@ -25,7 +25,6 @@ func main() {
 	switch {
 	case *MIGRATE_DB:
 		db.ConnectDB()
-		db.MigrateDB()
 	case *MIGRATE_CLEAN:
 		var input string
 		fmt.Println("Cleaning your migration directory will destroy all of your migrations. Are you sure? (y/N)")

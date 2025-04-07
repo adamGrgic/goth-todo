@@ -20,9 +20,9 @@ func ConfigureLogging() {
 		zerolog.SetGlobalLevel(zerolog.ErrorLevel) // only error and fatal
 	}
 
-	log.Debug().Msg("This is a debug log")  // hidden in both cases
-	log.Info().Msg("This is an info log")   // only in debug
-	log.Warn().Msg("This is a warning log") // only in debug
-	log.Error().Msg("This is an error log") // always shown
+	// log.Debug().Msg("This is a debug log")  // hidden in both cases
+	// log.Info().Msg("This is an info log")   // only in debug
+	// log.Warn().Msg("This is a warning log") // only in debug
+	// log.Error().Msg("This is an error log") // always shown
 	// log.Fatal().Msg("This is a fatal log")  // always shown, exits immediately
 }

@@ -15,14 +15,15 @@ type Model struct {
 	Component templ.Component
 }
 
-templ nav() {
-	<nav class="navbar navbar-expand-lg bg-body-tertiary">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#">Todo Home</a>
-			<!-- Rest of navbar -->
-		</div>
-	</nav>
-}
+// templ nav() {
+// 	<nav id="navbar" class="">
+// 		<div class="container-fluid">
+// 			<a class="navbar-brand" href="#">Dashboard</a>
+// 			<a class="navbar-brand" href="#">Project Lists</a>
+// 			<!-- Rest of navbar -->
+// 		</div>
+// 	</nav>
+// }
 
 templ HTML( model Model ) {
 	
@@ -42,8 +43,45 @@ templ HTML( model Model ) {
 	</head>
 	<body>
 		if token != nil {
-			@nav()
-			<main>
+			// for now commenting out nav sub component
+			// if component gets more complex consider moving
+			// @nav()
+
+
+			// for reference
+			// href="/dashboard"
+			// hx-get="/dashboard"
+			// hx-target="#main-content"
+			// href="/user/logout"
+			// hx-get="/user/logout"
+			// hx-target="#main-content"
+			// href="/projects"
+			// hx-get="/projects"
+			// hx-target="#main-content"
+			<nav id="navbar" class="">
+				<div id="main-menu">
+					<a class=""
+					active="true"
+					
+					hx-push-url="true">
+						Dashboard
+					</a>
+
+					<a class=""
+					
+					hx-push-url="true">
+						Task Lists
+					</a>
+				</div>
+				<div id="secondary-menu">
+					<a class=""
+					
+					hx-push-url="true">
+						Logout
+					</a>
+				</div>
+			</nav>
+			<main id="#main-content">
 				@model.Component
 			</main>
 		} else {
@@ -59,5 +97,6 @@ templ HTML( model Model ) {
 	</html>
 
     <script src={media.GetJsFile("forms")} nonce={middleware.GetJsNonce(model.Context)}></script>
+    <script src={media.GetJsFile("nav")} nonce={middleware.GetJsNonce(model.Context)}></script>
 }
 

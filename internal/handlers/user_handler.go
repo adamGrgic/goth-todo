@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"goth-todo/internal/auth"
 	login_vc "goth-todo/internal/components/login"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type UserHandler struct {
@@ -35,18 +37,20 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 func (h *UserHandler) Login(c *gin.Context) {
 	fmt.Println("Login method running")
 
+	ctx := context.Background()
+
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	fmt.Println("form email: ", email)
-	fmt.Println("form password: ", password)
+	log.Info().Str("email", email).Msg("form email")
+	log.Info().Str("password", password).Msg("form password: ")
 
 	var user models.User
-	h.UserService.GetUser(&user, email, password)
-	fmt.Println("retrieved user: ", user.Email)
+	h.UserService.GetUser(ctx, &user, email, password)
+	log.Info().Str("email", user.Email).Msg("retrieved user: ")
 
 	if user.Email == "" {
-		fmt.Println("User not found, please try again.")
+		log.Error().Msg("User not found, please try again.")
 		model := login_vc.Model{
 			Username: email,
 			ErrorMsg: "User not found, please try again.",

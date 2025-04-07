@@ -57,7 +57,8 @@ async function compileScssFile(entry: Dirent, fullPath: string): Promise<[string
   console.log("[VERBOSE DEBUG] hashedFilename: ", hashedFilename)
   console.log("[VERBOSE DEBUG] outputPath: ", outputPath)
 
-  await deleteHashedFiles(logicalName,outputPath,"css");
+  await deleteHashedFiles(OUTPUT_DIR, logicalName, "css", hashedFilename);
+
   writeFileSync(outputPath, cssText);
 
   console.log(`✅ Compiled ${entry.name} → ${hashedFilename}`);

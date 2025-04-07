@@ -1,13 +1,14 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"goth-todo/internal/core/models"
 	"goth-todo/internal/core/repository"
 )
 
 type UserService interface {
-	GetUser(user *models.User, email string, password string) error
+	GetUser(ctx context.Context, user *models.User, email string, password string) error
 }
 
 type UserServiceImpl struct {
@@ -20,10 +21,10 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (r *UserServiceImpl) GetUser(user *models.User, email string, password string) error {
+func (r *UserServiceImpl) GetUser(ctx context.Context, user *models.User, email string, password string) error {
 	// Look up user
 
-	if err := r.Repo.GetUser(user, email, password); err != nil {
+	if err := r.Repo.GetUser(ctx, user, email, password); err != nil {
 		fmt.Println("Repo GetUser returned error: ", err)
 		return err
 	}

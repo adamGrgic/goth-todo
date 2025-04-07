@@ -19,18 +19,21 @@ templ HTML( model Model ) {
 			<div class="">
 				<h3>Goth Stack Todo Application</h3>
 			</div>
-			<div class="card p-4">
+			<div>
 				<form hx-post="/user/login" 
 					hx-target="#login-gateway"
 					hx-swap="outerHTML">
-					<div class="input-wrapper">
-						<label for="exampleInputEmail1" class="form-label">Email address</label>
-						<input name="email" value={model.Username} type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+					<div class="input-group">
+						<div class="input-wrapper">
+							<label for="exampleInputEmail1" class="form-label">Email address</label>
+							<input name="email" value={model.Username} type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example@domain.com" required>
+						</div>
+						<div class="input-wrapper">
+							<label for="exampleInputPassword1" class="form-label">Password</label>
+							<input name="password" type="password" class="form-control" id="exampleInputPassword1" required>
+						</div>
 					</div>
-					<div class="input-wrapper">
-						<label for="exampleInputPassword1" class="form-label">Password</label>
-						<input name="password" type="password" class="form-control" id="exampleInputPassword1" required>
-					</div>
+					
 					<div class="action-btn-container">
 						<button class="btn-login">Login</button>
 						<button class="btn-register">Register</button>

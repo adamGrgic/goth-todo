@@ -43,7 +43,7 @@ async function compileFile(entry: Dirent, fullPath: string): Promise<[string, st
   console.log("[VERBOSE DEBUG] hashedFilename: ", hashedFilename)
   console.log("[VERBOSE DEBUG] outputPath: ", outputPath)
 
-  await deleteHashedFiles(INPUT_DIR_JS!, logicalName, "js");
+  await deleteHashedFiles(INPUT_DIR_JS!, logicalName, "js", OUTPUT_DIR_JS);
   writeFileSync(outputPath, outputContent);
 
   console.log(`✅ Compiled ${relativePath} → ${hashedFilename}`);

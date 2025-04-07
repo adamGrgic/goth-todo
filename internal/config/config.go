@@ -9,13 +9,13 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
 
 type App struct {
 	Router *gin.Engine
-	DB     *gorm.DB
+	DB     *pgxpool.Pool
 }
 
 // for later
@@ -41,7 +41,7 @@ func loadEnv() {
 	}
 }
 
-func RunApp(db *gorm.DB) *App {
+func RunApp(db *pgxpool.Pool) *App {
 
 	loadEnv()
 
@@ -68,7 +68,7 @@ func RunApp(db *gorm.DB) *App {
 	// Setup routes
 	// router.SetupRoutes(r, taskHandlers, contentHandlers)
 
-	r.GET("/", contentHandlers.GetHomePage)
+	r.GET("/", contentHandlers.GetDashboardPage)
 
 	// User routes
 	userRoutes := r.Group("/user")
@@ -81,8 +81,8 @@ func RunApp(db *gorm.DB) *App {
 	{
 		taskRoutes.GET("/get", taskHandlers.GetTasks)
 		taskRoutes.POST("/add", taskHandlers.AddTask)
-		taskRoutes.POST("/toggle/:id", taskHandlers.ToggleTask)
-		taskRoutes.POST("/delete/:id", taskHandlers.DeleteTask)
+		// taskRoutes.POST("/toggle/:id", taskHandlers.ToggleTask)
+		// taskRoutes.POST("/delete/:id", taskHandlers.DeleteTask)
 	}
 	taskRoutes.Use(middleware.JWTMiddleware())
 

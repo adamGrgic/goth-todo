@@ -1,29 +1,43 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"goth-todo/internal/core/models"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type UserRepository struct {
-	DB *gorm.DB
+	DB *pgxpool.Pool
 }
 
-func NewUserRepository(db *gorm.DB) *UserRepository {
+func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{DB: db}
 }
 
-func (r *UserRepository) GetUser(user *models.User, username string, password string) error {
+func (r *UserRepository) GetUser(ctx context.Context, user *models.User, username string, password string) error {
 	fmt.Println("UserRepository search user: ", username)
 
-	err := r.DB.
-		Where("email = ?", username). // assuming you're matching by email
-		First(&user).Error
-	fmt.Println("value of user pointer after DB find: ", user.Email)
+	query := `
+		SELECT id, email, password, created_at, updated_at, deleted_at
+		FROM users
+		WHERE email = $1
+		LIMIT 1
+	`
+
+	row := r.DB.QueryRow(ctx, query, username)
+
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.DeletedAt,
+	)
 
 	if err != nil {
 		fmt.Println("User not found or error: ", err)

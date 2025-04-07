@@ -1,15 +1,15 @@
 package services
 
-import "gorm.io/gorm"
+import "github.com/jackc/pgx/v5/pgxpool"
 
 type ContentService interface {
 }
 
 type GormContentService struct {
-	DB *gorm.DB
+	DB *pgxpool.Pool
 }
 
-func NewGormContentService(db *gorm.DB) *GormContentService {
+func NewGormContentService(db *pgxpool.Pool) *GormContentService {
 	return &GormContentService{DB: db}
 }
 
