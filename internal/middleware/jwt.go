@@ -4,43 +4,46 @@ import (
 	// "net/http"
 	// "strings"
 
+	"context"
 	"goth-todo/internal/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	// "github.com/golang-jwt/jwt/v5"
-	// "goth-todo/internal/auth"
+
+	"goth-todo/internal/auth"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func JWTMiddleware() gin.HandlerFunc {
+	// return func(c *gin.Context) {
+	// 	token := auth.GetUserToken(c)
+	// 	if token == nil {
+	// 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+	// 		return
+	// 	}
+
+	// 	c.Next()
+	// }
 	return func(c *gin.Context) {
-		token := auth.GetUserToken(c)
-		if token == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		cookie, err := c.Cookie("jwt_token")
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
 			return
 		}
 
-		// parts := strings.Split(authHeader, " ")
-		// if len(parts) != 2 || parts[0] != "Bearer" {
-		// 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
-		// 	return
-		// }
+		claims := &auth.CustomClaims{} // ✅ use your actual claims type
 
-		// tokenStr := parts[1]
+		token, err := jwt.ParseWithClaims(cookie, claims, func(t *jwt.Token) (interface{}, error) {
+			return auth.JwtKey, nil
+		})
+		if err != nil || !token.Valid {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			return
+		}
 
-		// token, err := jwt.ParseWithClaims(tokenStr, &auth.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// 	return auth.JwtKey, nil
-		// })
-
-		// if err != nil || !token.Valid {
-		// 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		// 	return
-		// }
-
-		// if claims, ok := token.Claims.(*auth.CustomClaims); ok {
-		// 	c.Set("username", claims.Username)
-		// }
-
+		ctx := context.WithValue(c.Request.Context(), "account_id", claims.AccountId) // ✅ matches your struct
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }

@@ -3,16 +3,19 @@ package auth
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 var JwtKey = []byte("your-secret-key")
 
 type CustomClaims struct {
-	Username string `json:"username"`
+	Username  string    `json:"username"`
+	AccountId uuid.UUID `json:"account_id"`
 	jwt.RegisteredClaims
 }
 
@@ -24,9 +27,10 @@ func GetUserToken(c *gin.Context) *string {
 	return &token
 }
 
-func SetUserJWT(c *gin.Context, username string) error {
+func SetUserJWT(c *gin.Context, username string, account uuid.UUID) error {
 	claims := CustomClaims{
-		Username: username,
+		Username:  username,
+		AccountId: account,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
 			Subject:   username,
@@ -48,7 +52,7 @@ func SetUserJWT(c *gin.Context, username string) error {
 		Value:    signedToken,
 		MaxAge:   10000,
 		Path:     "/",
-		Domain:   "192.168.0.26",
+		Domain:   os.Getenv("DOMAIN"),
 		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

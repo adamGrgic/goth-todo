@@ -22,6 +22,10 @@ func NewTaskService(taskRepo repository.TaskRepository) TaskService {
 	}
 }
 
+func (s *TaskServiceImpl) GetList(context context.Context) error {
+	return s.Repo
+}
+
 func (s *TaskServiceImpl) GetTasks(context context.Context) ([]models.Task, error) {
 	return s.Repo.GetTasks(context)
 }

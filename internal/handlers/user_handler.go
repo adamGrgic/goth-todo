@@ -60,7 +60,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	// ✅ Generate JWT
-	err := auth.SetUserJWT(c, user.Email)
+	err := auth.SetUserJWT(c, user.Email, user.AccountId)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Could not generate token")
 		return

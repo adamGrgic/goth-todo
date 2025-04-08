@@ -34,7 +34,13 @@ func NewTaskHandler(taskService services.TaskService) *TaskHandler {
 // 	templates.Dog().Render(c, c.Writer) // Use the generated templ function
 // }
 
-// Loads full page with tasks
+func (h *TaskHandler) GetList(c *gin.Context) {
+	log.Info().Msg("GetList endpoint called")
+
+	ctx := context.Background()
+
+}
+
 func (h *TaskHandler) GetTasks(c *gin.Context) {
 	log.Info().Msg("Getting tasks")
 

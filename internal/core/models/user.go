@@ -22,6 +22,7 @@ type User struct {
 // RefreshToken model for tracking active sessions
 type RefreshToken struct {
 	ID        uuid.UUID `json:"id"`
+	AccountId uuid.UUID `json:"account_id"`
 	UserID    uuid.UUID `json:"user_id"`
 	Token     string    `json:"token"`
 	ExpiresAt time.Time `json:"expires_at"`

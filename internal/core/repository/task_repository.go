@@ -3,8 +3,11 @@ package repository
 import (
 	"context"
 	"goth-todo/internal/core/models"
+	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 )
 
 type TaskRepository struct {
@@ -13,6 +16,22 @@ type TaskRepository struct {
 
 func NewTaskRepository(db *pgxpool.Pool) *TaskRepository {
 	return &TaskRepository{DB: db}
+}
+
+func (r *TaskRepository) GetList(ctx context.Context, id int) error {
+	accountId := ctx.Value("account_id").(uuid.UUID)
+	rows, err := r.DB.Query(ctx, `SELECT id, title, description 
+								FROM tasklist 
+								WHERE id=$1 AND account_id=$2
+								`, id, accountId)
+	if err != nil {
+		log.Err(err).
+			Str("id", strconv.Itoa(id)).
+			Msg("list not found")
+		return err
+	}
+	defer rows.Close()
+
 }
 
 func (r *TaskRepository) GetTasks(ctx context.Context) ([]models.Task, error) {
